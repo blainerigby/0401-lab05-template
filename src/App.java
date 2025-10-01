@@ -4,11 +4,12 @@
  * Copyright (c) 2025 Nadine von Frankenberg
  */
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class App {
 
-    private static Scanner myScanner = new Scanner(System.in);
+    private static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
         Cat cat1 = createCat();
@@ -42,7 +43,7 @@ public class App {
             cat2.feed();
         }
 
-        myScanner.close();
+        scan.close();
     }
 
     public static Cat createCat() {
@@ -53,32 +54,70 @@ public class App {
         String catSound = promptForTextInput("Your cat says what? ");
         int age = promptForAge(name);
         String funnyStory = promptForTextInput("Tell a funny story about your cat! ");
-        int energyLevel = promptForEnergyLevel(name);
-
+        int energyLevel  = promptForEnergyLevel(name);
         System.out.println("Meet " + name + ", it says " + catSound + "!\n");
         return new Cat(name, catSound, age, funnyStory, energyLevel);
     }
 
     private static String promptForTextInput(String questionPrompt) {
         System.out.print(questionPrompt);
-        String name = myScanner.nextLine();
+        String name = scan.nextLine();
         return name;
     }
 
     private static int promptForAge(String catName) {
-        System.out.print("Enter " + catName + "'s age (in years): ");
-        int age = myScanner.nextInt();
-        // Skip the enter token
-        myScanner.nextLine();
+        int age = 0;
+        for(int i = 0; i<3; i++){
+            try{
+                System.out.println("Enter " + catName + "'s age (in years from 0-50): ");
+                age = scan.nextInt();
+                scan.nextLine();
+                if(age<0 || age>50){
+                    System.out.println("Enter an age between 0-50.");
+                    if(i == 2){
+                        System.out.println("Three tries have been used. Default age set at 1.");
+                        age = 1;
+                    }
+                    continue;   
+                } 
+            }catch(InputMismatchException e){
+                System.out.println("Invalid age! Please enter a valid age.");
+                scan.nextLine();
+                if(i == 2){
+                    System.out.println("Three tries have been used. Default age set at 1.");
+                    age = 1;
+                }
+            }
+        }
         return age;
     }
 
     private static int promptForEnergyLevel(String catName) {
         int energyLevel = 0;
+        for(int i=0;i<3;i++){
+            try{
+                System.out.println("On a scale of 1 to 10, how energetic is " + catName + "? ");
+                energyLevel = scan.nextInt();
+                scan.nextLine();
+                if (energyLevel <0 || energyLevel >10){
+                    System.out.println("Enter an energy level between 0-10.");
+                    if(i==2){
+                        System.out.println("Three tries have been used. Default Energy level set at"+energyLevel+".");
+                        energyLevel = 1;
+                    }
+                    continue;
+                }
+            }catch(InputMismatchException e){
+                System.out.println("Invalid energy level! Please enter a valid energy level.");
+                scan.nextLine();
+                if(i==2){
+                    System.out.println("Three tries have been used. Default Energy level set at"+energyLevel+".");
+                    energyLevel = 1;
+                }
+            }
+            
+        }
         // Validate energy level input
-        System.out.print("On a scale of 1 to 10, how energetic is " + catName + "? ");
-        energyLevel = myScanner.nextInt();
-        myScanner.nextLine();
         return energyLevel;
     }
 
